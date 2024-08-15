@@ -11,7 +11,8 @@ from bioretrieval.auxiliar.logger_class import Logger
 from bioretrieval.processing.retrieval import Retrieval
 
 
-def bio_retrieval_module(input_folder_path, input_type, model_folder_path, conversion_factor, show_message):
+def bio_retrieval_module(input_folder_path: str, input_type: str, model_folder_path: str,
+                         conversion_factor: float, show_message: callable):
     """
     Bio Retrieval module for ARTMO based models:
      LEO-IPL - University of Valencia. June 2024.
@@ -191,7 +192,7 @@ def bio_retrieval_module(input_folder_path, input_type, model_folder_path, conve
     return 0
 
 
-def make_output_folder(output_path):
+def make_output_folder(output_path: str) -> bool:
     """
     Create output folder
     :param output_path: path of output folder

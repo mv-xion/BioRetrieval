@@ -17,12 +17,13 @@ from bioretrieval.processing.mlra_gpr import GPR_mapping_parallel
 
 
 # Normalise data function
-def norm_data(data, mean, std):
+def norm_data(data: np.ndarray, mean: float, std: float) -> np.ndarray:
     return (data - mean) / std
 
 
 class Retrieval:
-    def __init__(self, logfile, show_message, input_file, input_type, output_file, model_path, conversion_factor):
+    def __init__(self, logfile: str, show_message: callable, input_file: str, input_type: str, output_file: str,
+                 model_path: str, conversion_factor: float):
         """
         Initialise the retrieval class
         :param logfile: path to the log file
@@ -54,7 +55,7 @@ class Retrieval:
         self.model_path = model_path
 
     # TODO: Try catch blocks, exceptions
-    def bio_retrieval(self):
+    def bio_retrieval(self) -> bool:
         self.logger.open()
         print('Reading image...')
         self.show_message('Reading image...')
@@ -180,7 +181,7 @@ class Retrieval:
         self.logger.close()
         return 0
 
-    def band_selection(self, i):
+    def band_selection(self, i: int) -> list:
         current_wl = self.img_wavelength
         expected_wl = self.bio_model[i].wave_length
         # Find the intersection of the two lists of wavelength
@@ -197,7 +198,7 @@ class Retrieval:
 
         return reflectances_new  # returning the selected bands
 
-    def export_retrieval(self):
+    def export_retrieval(self) -> bool:
         self.logger.open()
         print('Exporting image...')
         self.show_message('Exporting image...')

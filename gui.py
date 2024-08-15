@@ -115,7 +115,7 @@ class SimpleGUI(tk.Tk):
         except Exception as e:
             print("Error", e)
 
-    def run_model(self, input_folder_path, input_type, model_folder_path, conversion_factor):
+    def run_model(self, input_folder_path: str, input_type: str, model_folder_path: str, conversion_factor: float):
         """
         This function runs on the new thread and starts the retrieval function
         :param conversion_factor: image conversion factor
@@ -142,7 +142,7 @@ class SimpleGUI(tk.Tk):
         # Enable the Run button after the progress window is closed
         self.button_run.config(state=tk.NORMAL)
 
-    def show_message(self, message):
+    def show_message(self, message: str):
         """
         Show message function for the GUI
         :param message: message to show

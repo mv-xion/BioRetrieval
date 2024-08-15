@@ -37,7 +37,7 @@ def read_netcdf(path, conversion_factor):
 
 #__________________________________ENVI handle______________________________
 
-def read_envi(path, conversion_factor):
+def read_envi(path: str, conversion_factor: float) -> tuple:
     """
     Read the ENVI format
     :param path: path of the ENVI file
@@ -70,7 +70,7 @@ def read_envi(path, conversion_factor):
         return data, data_wavelength
 
 
-def get_lat_lon_envi(map_info, lon, lat):
+def get_lat_lon_envi(map_info: dict, lon: list, lat: list) -> tuple:
     """
     Getting the latitude and longitude of the ENVI map
     :param map_info: contains map information
@@ -122,7 +122,7 @@ def get_lat_lon_envi(map_info, lon, lat):
 
 #_____________________________________ Plotting images ________________________________________
 
-def show_reflectance_img(data_refl, data_wavelength):
+def show_reflectance_img(data_refl: np.ndarray, data_wavelength: np.ndarray):
     """
     Showing the image read
     :param data_refl: data cube of reflectance (y,x,dim)
