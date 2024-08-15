@@ -11,7 +11,7 @@ from bioretrieval.auxiliar.logger_class import Logger
 from bioretrieval.processing.retrieval import Retrieval
 
 
-def bio_retrieval_module(input_folder_path, input_type, model_folder_path, show_message):
+def bio_retrieval_module(input_folder_path, input_type, model_folder_path, conversion_factor, show_message):
     """
     Bio Retrieval module for ARTMO based models:
      LEO-IPL - University of Valencia. June 2024.
@@ -175,7 +175,7 @@ def bio_retrieval_module(input_folder_path, input_type, model_folder_path, show_
         print(f'output: {l2b_output_files[i]}')
         # Creating Retrieval object and call function
         retrieval = Retrieval(log_file_id, show_message, input_files[i], input_type, l2b_output_files[i],
-                              model_folder_path)
+                              model_folder_path, conversion_factor)
         return_value = retrieval.bio_retrieval()
         if return_value == 1:  # There was an error
             return 1

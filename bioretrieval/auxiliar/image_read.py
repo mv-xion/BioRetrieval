@@ -12,10 +12,11 @@ import os
 
 
 #__________________________netCDF handle____________________________
-def read_netcdf(path):
+def read_netcdf(path, conversion_factor):
     """
     Reading the netcdf file
     :param path: path to the netcdf file
+    :param conversion_factor: image conversion factor
     :return: data cube of reflectance image, wavelength list
     """
     # Read netCDF image ! Cannot be accent in the path!
@@ -25,7 +26,7 @@ def read_netcdf(path):
     # values and GPR RTM reflectance values
     np_refl = ds_im['l2a_BOA_rfl'][:]
     np_refl = np_refl.data
-    data_refl = np_refl * 1 / 10000
+    data_refl = np_refl * conversion_factor
 
     # Saving image wavelengths
     data_wavelength = ds_im['central_wavelength'][:]
@@ -36,10 +37,11 @@ def read_netcdf(path):
 
 #__________________________________ENVI handle______________________________
 
-def read_envi(path):
+def read_envi(path, conversion_factor):
     """
     Read the ENVI format
     :param path: path of the ENVI file
+    :param conversion_factor: image conversion factor
     :return: data cube of reflectance image, wavelength list
     optionally returns latitude and longitude list if map information is available
     """
@@ -48,7 +50,7 @@ def read_envi(path):
 
     # Load the data into a NumPy array
     data = envi_image.asarray()
-    data = data * 1 / 10000
+    data = data * conversion_factor
 
     # Storing all the metadata
     info = envi_image.metadata

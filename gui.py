@@ -24,7 +24,7 @@ class SimpleGUI(tk.Tk):
         self.label_input_folder.grid(row=0, column=0, padx=5, pady=5)
 
         self.entry_input_folder = tk.Entry(self, width=50)
-        self.entry_input_folder.insert(0, os.path.join('C:\\TFM\\', 'input'))
+        self.entry_input_folder.insert(0, os.path.join(default_folder, 'input'))
         self.entry_input_folder.grid(row=0, column=1, padx=5, pady=5)
 
         self.button_browse_input_folder = tk.Button(self, text="Browse", command=self.browse_input_folder)
@@ -37,7 +37,9 @@ class SimpleGUI(tk.Tk):
         self.input_type_var = tk.StringVar(self)
         self.input_type_var.set("CHIME netCDF")  # Default option
         self.input_type_dropdown = ttk.Combobox(self, textvariable=self.input_type_var,
-                                                values=["CHIME netCDF", "ENVI Standard"])
+                                                values=["CHIME netCDF", "ENVI Standard"],
+                                                state="readonly"  # This makes the dropdown non-editable
+                                                 )
         self.input_type_dropdown.grid(row=0, column=4, padx=5, pady=5)
 
         # Selecting the model folder
@@ -50,6 +52,14 @@ class SimpleGUI(tk.Tk):
 
         self.button_browse_model_folder = tk.Button(self, text="Browse", command=self.browse_model_folder)
         self.button_browse_model_folder.grid(row=1, column=2, padx=5, pady=5)
+
+        # Adding the Image Conversion Factor entry box
+        self.label_conversion_factor = tk.Label(self, text="Image Conversion Factor:")
+        self.label_conversion_factor.grid(row=1, column=3, padx=5, pady=5)
+
+        self.entry_conversion_factor = NonNegativeNumberEntry(self, width=20)
+        self.entry_conversion_factor.insert(0, '0.0001')  # Set default value
+        self.entry_conversion_factor.grid(row=1, column=4, padx=5, pady=5)
 
         # Run button
         self.button_run = tk.Button(self, text="Run", command=self.start_model_thread)
@@ -76,6 +86,7 @@ class SimpleGUI(tk.Tk):
         input_folder_path = self.entry_input_folder.get()
         model_folder_path = self.entry_model_folder.get()
         input_type = self.input_type_var.get()
+        conversion_factor = float(self.entry_conversion_factor.get())
         try:
             if os.path.isdir(input_folder_path) and os.path.isdir(model_folder_path):
                 # Disable the Run button
@@ -98,22 +109,23 @@ class SimpleGUI(tk.Tk):
                 self.text_widget.pack(pady=5)
 
                 # Run the model in a separate thread
-                threading.Thread(target=self.run_model, args=(input_folder_path, input_type, model_folder_path)).start()
+                threading.Thread(target=self.run_model, args=(input_folder_path, input_type, model_folder_path, conversion_factor)).start()
             else:
                 raise FileNotFoundError("Invalid or no input or model folder selected")
         except Exception as e:
             print("Error", e)
 
-    def run_model(self, input_folder_path, input_type, model_folder_path):
+    def run_model(self, input_folder_path, input_type, model_folder_path, conversion_factor):
         """
         This function runs on the new thread and starts the retrieval function
+        :param conversion_factor: image conversion factor
         :param input_folder_path: path to the input folder
         :param input_type: type of input file
         :param model_folder_path: path to the model folder
         :return: Shows completion message and is able to run again
         """
         # Call the module function that can send messages to the text widget
-        message = bio_retrieval_module(input_folder_path, input_type, model_folder_path, self.show_message)
+        message = bio_retrieval_module(input_folder_path, input_type, model_folder_path, conversion_factor, self.show_message)
 
         # Stop the progress bar
         self.progress_bar.stop()
@@ -139,6 +151,25 @@ class SimpleGUI(tk.Tk):
         self.text_widget.insert(tk.END, message + "\n")
         self.text_widget.see(tk.END)  # Scroll to the end of the text widget
 
+
+class NonNegativeNumberEntry(tk.Entry):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.validation_command = self.register(self.validate_input)
+        self.config(validate="key", validatecommand=(self.validation_command, '%P'))
+
+    def validate_input(self, new_value):
+        if new_value == "":
+            return True
+        if new_value.isdigit():
+            return True
+        try:
+            if float(new_value) >= 0:
+                return True
+        except ValueError:
+            return False
+
+        return False
 
 def main():
     """

@@ -22,7 +22,7 @@ def norm_data(data, mean, std):
 
 
 class Retrieval:
-    def __init__(self, logfile, show_message, input_file, input_type, output_file, model_path):
+    def __init__(self, logfile, show_message, input_file, input_type, output_file, model_path, conversion_factor):
         """
         Initialise the retrieval class
         :param logfile: path to the log file
@@ -31,7 +31,9 @@ class Retrieval:
         :param input_type: type of input file
         :param output_file: path to the output file
         :param model_path: path to the models directory
+        :param conversion_factor: image conversion factor
         """
+        self.conversion_factor = conversion_factor
         self.number_of_models = None
         self.bio_model = []  # Storing the models
         self.variable_maps = []  # Storing variable maps
@@ -60,12 +62,12 @@ class Retrieval:
         # __________________________Split image read by file type______________________________
 
         if self.input_type == 'CHIME netCDF':
-            image_data = read_netcdf(self.input_file)
+            image_data = read_netcdf(self.input_file, self.conversion_factor)
             self.img_reflectance = image_data[0]  # save reflectance
             self.img_wavelength = image_data[1]  # save wavelength
             self.map_info = False
         elif self.input_type == 'ENVI Standard':
-            image_data = read_envi(self.input_file)
+            image_data = read_envi(self.input_file, self.conversion_factor)
             self.img_reflectance = image_data[0]  # save reflectance
             self.img_wavelength = image_data[1]  # save wavelength
             if len(image_data) == 4:
